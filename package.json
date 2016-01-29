@@ -1,0 +1,42 @@
+{
+  "name": "graysql-orm-loader-waterline",
+  "version": "0.1.0",
+  "description": "Waterline translator for graysql-orm-loader.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run lint && mocha --check-leaks -t 5000 test/index.js",
+    "cover": "npm run lint && istanbul cover _mocha -- --check-leaks -t 5000 -b -R spec test/index.js",
+    "lint": "eslint index.js src/"
+  },
+  "keywords": [
+    "graphql",
+    "graysql",
+    "graysql-extension",
+    "waterline"
+  ],
+  "contributors": [
+    "Lorenzo Ruiz <lars.bs@hotmail.com>",
+    "Borja M. Merchán <jaretz@sindrosoft.com>"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/larsbs/graysql-orm-loader-waterline.git"
+  },
+  "peerDependencies": {
+    "graysql": "^0.3.1",
+    "graysql-orm-loader": "^0.1.1"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^1.10.3",
+    "graphql": "^0.4.14",
+    "graphql-relay": "^0.3.6",
+    "graysql": "^0.3.1",
+    "graysql-orm-loader": "^0.1.1",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.4.5",
+    "waterline": "^0.10.31"
+  }
+}
