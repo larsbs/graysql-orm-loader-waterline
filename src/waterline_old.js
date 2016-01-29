@@ -1,97 +1,97 @@
-'use strict';
+//'use strict';
 
-const _ = require('lodash');
-const capitalize = require('lodash.capitalize');
-
-
-function waterlineTypesToGQLType(attribute) {
-  switch (attribute) {
-    case 'string':
-      return 'String';
-    case 'integer':
-      return 'Int';
-    case 'float':
-      return 'Float';
-    default:
-      return 'String';
-  }
-}
-
-function isWaterlineModels(models) {
-  if (Object.keys(models).length < 1) {
-    return false;
-  }
-
-  for (const key in models) {
-    if ( ! models[key].waterline) {
-      return false;
-    }
-  }
-  return true;
-}
+//const _ = require('lodash');
+//const capitalize = require('lodash.capitalize');
 
 
-class WaterlineTranslator{
-  constructor(models) {
-    if (typeof models !== 'object' || ! isWaterlineModels(models)) {
-      throw new TypeError('Has to be an object');
-    }
-    this._models = models;
-  }
+//function waterlineTypesToGQLType(attribute) {
+  //switch (attribute) {
+    //case 'string':
+      //return 'String';
+    //case 'integer':
+      //return 'Int';
+    //case 'float':
+      //return 'Float';
+    //default:
+      //return 'String';
+  //}
+//}
 
-  getModels() {
-    return Object.keys(this._models);
-  }
+//function isWaterlineModels(models) {
+  //if (Object.keys(models).length < 1) {
+    //return false;
+  //}
 
-  getModelById(model, id) {
-    return this._models[model].find({
-      id: id
-    }).then(function(result) {
-      return result;
-    });
-  }
+  //for (const key in models) {
+    //if ( ! models[key].waterline) {
+      //return false;
+    //}
+  //}
+  //return true;
+//}
 
-  getModelByCriteria(model, args) {
-    return this._models[model].find({ args }.populateAll().then(function(results) {
-      return results;
-    }));
-  }
 
-  createModel(model, args) {
-    return this._models[model].create;
-  }
+//class WaterlineTranslator{
+  //constructor(models) {
+    //if (typeof models !== 'object' || ! isWaterlineModels(models)) {
+      //throw new TypeError('Has to be an object');
+    //}
+    //this._models = models;
+  //}
 
-  updateModel(model, args) {
-    return this._models[model].update;
-  }
+  //getModels() {
+    //return Object.keys(this._models);
+  //}
 
-  deleteModel(model, args) {
-    return this._models[model].delete;
-  }
+  //getModelById(model, id) {
+    //return this._models[model].find({
+      //id: id
+    //}).then(function(result) {
+      //return result;
+    //});
+  //}
 
-  getAttributesFrom(model) { //'accessToken': 'String'
-    const attributes = {};
-    _.mapKeys(this._models[model].attributes, function(attribute, key) {
-      if (attribute.type) {
-        attribute[key] = waterlineTypesToGQLType(attribute.type);
-      }
-    });
+  //getModelByCriteria(model, args) {
+    //return this._models[model].find({ args }.populateAll().then(function(results) {
+      //return results;
+    //}));
+  //}
 
-    return attributes;
-  }
+  //createModel(model, args) {
+    //return this._models[model].create;
+  //}
 
-  getAssociationsFrom(model) { //'user': '[User]'
-    const associations = {};
-    this._models[model].associations.forEach((association) => {
-      if (association.type === 'model') {
-        associations[association.alias] = '\'' + _.capitalize(association.alias) + '\'';
-      } else if (association.type === 'collection') {
-        associations[association.alias] = '\'[' + _.capitalize(association.alias) + ']\'';
-      }
-    });
+  //updateModel(model, args) {
+    //return this._models[model].update;
+  //}
 
-    return associations;
-  }
-}
+  //deleteModel(model, args) {
+    //return this._models[model].delete;
+  //}
 
-module.exports = WaterlineTranslator;
+  //getAttributesFrom(model) { //'accessToken': 'String'
+    //const attributes = {};
+    //_.mapKeys(this._models[model].attributes, function(attribute, key) {
+      //if (attribute.type) {
+        //attribute[key] = waterlineTypesToGQLType(attribute.type);
+      //}
+    //});
+
+    //return attributes;
+  //}
+
+  //getAssociationsFrom(model) { //'user': '[User]'
+    //const associations = {};
+    //this._models[model].associations.forEach((association) => {
+      //if (association.type === 'model') {
+        //associations[association.alias] = '\'' + _.capitalize(association.alias) + '\'';
+      //} else if (association.type === 'collection') {
+        //associations[association.alias] = '\'[' + _.capitalize(association.alias) + ']\'';
+      //}
+    //});
+
+    //return associations;
+  //}
+//}
+
+//module.exports = WaterlineTranslator;

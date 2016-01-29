@@ -36,20 +36,27 @@ module.exports = function (WT) {
       it('should returns non nullable arguments as such');
     });
     describe('#resolveById(modelName)', function () {
-      it('should return a single entity');
-      it('should return an entity of the specified model');
+      it('should returns a function that returns a single entity');
+      it('should returns a function that returns an entity of the specified model');
     });
     describe('#resolveAll(modelName)', function () {
+      it('should returns a function that returns multiple entities');
+      it('should returns a function that returns entities of the specified model');
     });
     describe('#resolveCreate(modelName)', function () {
+      it('should returns a function that creates a new entity of the specified model');
     });
     describe('#resolveUpdate(modelName)', function () {
+      it('should returns a function that updates an entity of the specified model');
     });
     describe('#resolveDelete(modelName)', function () {
+      it('should returns a function that deletes an entity of the specified model');
     });
     describe('#resolveNodeId(modelName)', function () {
+      it('should returns a function that resolves an entity of the specified model by its id');
     });
     describe('#resolveIsTypeOf(modelName)', function () {
+      it('should returns a function that resolves the type of the entities of the specified model');
     });
   });
 
