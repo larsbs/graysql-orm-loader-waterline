@@ -21,9 +21,9 @@ class WaterlineTranslator {
     const model = this._models[modelName];
     const properties = {};
 
-    for (const key in model.definition) {
-      if ( ! model.definition[key].foreignKey) {
-        properties[key] = { type: Utils.parseTypeToGraysQLType(model.definition[key].type) };
+    for (const key in model.attributes) {
+      if ( ! Utils.isAssociation(model.attributes[key])) {
+        properties[key] = { type: Utils.parseTypeToGraysQLType(model.attributes[key].type) };
       }
     }
 
@@ -31,6 +31,30 @@ class WaterlineTranslator {
   }
 
   parseModelAssociations(modelName, useRelay) {
+    const model = this._models[modelName];
+    const associations = {};
+
+    for (const key in model.attributes) {
+      if (Utils.isAssociation(model.attributes[key])) {
+        const association = model.attributes[key];
+        if (association.model) {
+          associations[key] = { type: association.model };
+        }
+        else if (association.collection) {
+          if (useRelay) {
+            associations[key] = {
+              type: `@>${association.collection}`,
+              resolve: (model, args) => model[key]
+            };
+          }
+          else {
+            associations[key] = { type: `[${association.collection}]` };
+          }
+        }
+      }
+    }
+
+    return associations;
   }
 
   getArgsForCreate(modelName) {
