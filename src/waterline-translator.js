@@ -70,6 +70,7 @@ class WaterlineTranslator {
   }
 
   getArgsForDelete(modelName) {
+    return { id: { type: 'Int!' } };
   }
 
   resolveById(modelName) {

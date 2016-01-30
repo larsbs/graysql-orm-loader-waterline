@@ -151,9 +151,28 @@ module.exports = function (WaterlineTranslator) {
       });
     });
     describe('#getArgsForDelete(modelName)', function () {
-      it('should return an object containing vsalid GraysQL args');
-      it('should return all the arguments needed to delete an entity of the model');
-      it('should return non nullable arguments as such');
+      let resultForGroup;
+      let resultForUser;
+      before(function () {
+        resultForGroup = WT.getArgsForDelete('group');
+        resultForUser = WT.getArgsForDelete('user');
+      });
+      it('should return all the arguments needed to delete an entity of the model', function () {
+        const expectedForGroup = ['id'];
+        const expectedForUser = ['id'];
+        expect(resultForGroup).to.include.keys(expectedForGroup);
+        expect(resultForUser).to.include.keys(expectedForUser);
+      });
+      it('should return non nullable arguments as such', function () {
+        const expectedForGroup = {
+          id: { type: 'Int!' }
+        };
+        const expectedForUser = {
+          id: { type: 'Int!' }
+        };
+        expect(resultForGroup).to.deep.equal(expectedForGroup);
+        expect(resultForUser).to.deep.equal(expectedForUser);
+      });
     });
     describe('#resolveById(modelName)', function () {
       it('should return a function that returns a single entity');
