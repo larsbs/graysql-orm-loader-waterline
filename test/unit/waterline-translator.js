@@ -14,7 +14,7 @@ module.exports = function (WT) {
     let models;
     before(function (done) {
       bootstrapWaterline(m => {
-        models = m;
+        models = m.collections;
         done();
       });
     });
