@@ -1,11 +1,40 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+const rmdir = require('rmdir');
+const expect = require('chai').expect;
+const bootstrapWaterline = require('../support/waterline-test');
+
 
 module.exports = function (WT) {
 
   describe('@WaterlineTranslator', function () {
+
+    let models;
+    before(function (done) {
+      bootstrapWaterline(m => {
+        models = m;
+        done();
+      });
+    });
+
+    after(function (done) {
+      rmdir(path.resolve(__dirname, '../../.tmp'), (err, dirs, files) => {
+        if (err) {
+          throw new Error(err);
+        }
+        done();
+      });
+    });
+
     describe('#constructor(models)', function () {
-      it('should only accepts an object containing waterline models');
+      it('should only accepts an object containing waterline models', function () {
+        expect(() => new WT(x => x)).to.throw(TypeError, /Expected models to be a valid waterline models object/);
+        expect(() => new WT({})).to.throw(TypeError, /Expected models to be a valid waterline models object/);
+        expect(() => new WT('asdf')).to.throw(TypeError, /Expected models to be a valid waterline models object/);
+        expect(() => new WT(models)).to.not.throw(TypeError, /Expected models to be a valid waterline models object/);
+      });
     });
     describe('#getModelsNames()', function () {
       it('should returns an array containing the names of the stored models');
