@@ -18,6 +18,9 @@ module.exports = {
 
     return true;
   },
+  isAssociation(attribute) {
+    return !!attribute.model || !!attribute.collection;
+  },
   parseTypeToGraysQLType(type) {
     switch (type) {
         case 'integer':
