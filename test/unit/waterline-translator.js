@@ -78,7 +78,7 @@ module.exports = function (WaterlineTranslator) {
         expect(resultForGroup).to.deep.equal(expectedForGroup);
         expect(resultForUser).to.deep.equal(expectedForUser);
       });
-      it('should return the associations af connections if useRelay is true', function () {
+      it('should return the associations as connections if useRelay is true', function () {
         const key = 'members';
         const expectedForGroup = {
           members: {
@@ -97,9 +97,30 @@ module.exports = function (WaterlineTranslator) {
       });
     });
     describe('#getArgsForCreate(modelName)', function () {
-      it('should return an object containing valid GraysQL args');
-      it('should return all the arguments needed to create an entity of the model');
-      it('should return non nullable arguments as such');
+      let resultForGroup;
+      let resultForUser;
+      before(function () {
+        resultForGroup = WT.getArgsForCreate('group');
+        resultForUser = WT.getArgsForCreate('user');
+      });
+      it('should return all the arguments needed to create an entity of the model', function () {
+        const expectedForGroup = ['name', 'members'];
+        const expectedForUser = ['nick', 'group'];
+        expect(resultForGroup).to.include.keys(expectedForGroup);
+        expect(resultForUser).to.include.keys(expectedForUser);
+      });
+      it('should return non nullable arguments as such', function () {
+        const expectedForGroup = {
+          name: { type: 'String!' },
+          members: { type: '[Int]' }
+        };
+        const expectedForUser = {
+          nick: { type: 'String!' },
+          group: { type: 'Int' }
+        };
+        expect(resultForGroup).to.deep.equal(expectedForGroup);
+        expect(resultForUser).to.deep.equal(expectedForUser);
+      });
     });
     describe('#getArgsForUpdate(modelName)', function () {
       it('should return an object containing valid GraysQL args');
@@ -107,13 +128,13 @@ module.exports = function (WaterlineTranslator) {
       it('should return non nullable arguments as such');
     });
     describe('#getArgsForDelete(modelName)', function () {
-      it('should return an object containing valid GraysQL args');
+      it('should return an object containing vsalid GraysQL args');
       it('should return all the arguments needed to delete an entity of the model');
       it('should return non nullable arguments as such');
     });
     describe('#resolveById(modelName)', function () {
       it('should return a function that returns a single entity');
-      it('should return a function that return an entity of the specified model');
+      it('should return a function that returns an entity of the specified model');
     });
     describe('#resolveAll(modelName)', function () {
       it('should return a function that returns multiple entities');

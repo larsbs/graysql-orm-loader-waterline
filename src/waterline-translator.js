@@ -58,6 +58,27 @@ class WaterlineTranslator {
   }
 
   getArgsForCreate(modelName) {
+    const model = this._models[modelName];
+    const ignoreKeys = ['id', 'createdAt', 'updatedAt'];
+    const args = {};
+    for (const key in model.attributes) {
+      if (ignoreKeys.indexOf(key) < 0) {
+        const attribute = model.attributes[key];
+        if (Utils.isAssociation(attribute)) {
+          if (attribute.collection) {
+            args[key] = { type: '[Int]' };
+          }
+          else {
+            args[key] = { type: 'Int' };
+          }
+        }
+        else {
+          args[key] = { type: Utils.parseTypeToGraysQLType(attribute.type) };
+          args[key].type = attribute.required ? args[key].type + '!' : args[key].type;
+        }
+      }
+    }
+    return args;
   }
 
   getArgsForUpdate(modelName) {

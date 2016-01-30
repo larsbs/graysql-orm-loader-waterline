@@ -40,8 +40,8 @@ module.exports = function bootstrap(cb) {
       const user2 = values[3];
       const user3 = values[4];
 
-      group1.members.add([user1, user2]);
-      group2.members.add([user3]);
+      group1.members.add([user1.id, user2.id]);
+      group2.members.add([user3.id]);
       Promise.all([group1.save(), group2.save()]).then(cb(models));
     })
     .catch(err => console.error(err));
