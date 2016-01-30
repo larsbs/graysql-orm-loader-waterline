@@ -46,9 +46,24 @@ module.exports = function (WaterlineTranslator) {
       });
     });
     describe('#parseModelProperties(modelName)', function () {
-      it('should returns an object containing valid GraysQL fields');
-      it('should returns all the properties of the model');
-      it('should not returns associations of the model')
+      it('should returns all the properties of the model', function () {
+        const expectedForGroup = {
+          id: { type: 'Int' },
+          name: { type: 'String' },
+          createdAt: { type: 'Date' },
+          updatedAt: { type: 'Date' }
+        };
+        const expectedForUser = {
+          id: { type: 'Int' },
+          nick: { type: 'String' },
+          createdAt: { type: 'Date' },
+          updatedAt: { type: 'Date' }
+        };
+        const resultForGroup = WT.parseModelProperties('group');
+        const resultForUser = WT.parseModelProperties('user');
+        expect(resultForGroup).to.deep.equal(expectedForGroup);
+        expect(resultForUser).to.deep.equal(expectedForUser);
+      });
     });
     describe('#parseModelAssociations(modelName, useRelay)', function () {
       it('should returns an object containing valid GraysQL fields');

@@ -17,5 +17,17 @@ module.exports = {
     }
 
     return true;
+  },
+  parseTypeToGraysQLType(type) {
+    switch (type) {
+        case 'integer':
+          return 'Int';
+        case 'string':
+          return 'String';
+        case 'datetime':
+          return 'Date';
+        default:
+          throw new Error(`Unsupported type ${type}`);
+    }
   }
 };

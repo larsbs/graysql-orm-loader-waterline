@@ -17,7 +17,17 @@ class WaterlineTranslator {
     return Object.keys(this._models);
   }
 
-  parseModelsProperties(modelName) {
+  parseModelProperties(modelName) {
+    const model = this._models[modelName];
+    const properties = {};
+
+    for (const key in model.definition) {
+      if ( ! model.definition[key].foreignKey) {
+        properties[key] = { type: Utils.parseTypeToGraysQLType(model.definition[key].type) };
+      }
+    }
+
+    return properties;
   }
 
   parseModelAssociations(modelName, useRelay) {
