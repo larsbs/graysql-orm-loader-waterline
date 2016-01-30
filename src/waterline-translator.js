@@ -14,6 +14,7 @@ class WaterlineTranslator {
   }
 
   getModelsNames() {
+    return Object.keys(this._models);
   }
 
   parseModelsProperties(modelName) {

@@ -7,14 +7,16 @@ const expect = require('chai').expect;
 const bootstrapWaterline = require('../support/waterline-test');
 
 
-module.exports = function (WT) {
+module.exports = function (WaterlineTranslator) {
 
   describe('@WaterlineTranslator', function () {
 
     let models;
+    let WT;
     before(function (done) {
       bootstrapWaterline(m => {
         models = m.collections;
+        WT = new WaterlineTranslator(models);
         done();
       });
     });
@@ -30,14 +32,18 @@ module.exports = function (WT) {
 
     describe('#constructor(models)', function () {
       it('should only accepts an object containing waterline models', function () {
-        expect(() => new WT(x => x)).to.throw(TypeError, /Expected models to be a valid waterline models object/);
-        expect(() => new WT({})).to.throw(TypeError, /Expected models to be a valid waterline models object/);
-        expect(() => new WT('asdf')).to.throw(TypeError, /Expected models to be a valid waterline models object/);
-        expect(() => new WT(models)).to.not.throw(TypeError, /Expected models to be a valid waterline models object/);
+        expect(() => new WaterlineTranslator(x => x)).to.throw(TypeError, /Expected models to be a valid waterline models object/);
+        expect(() => new WaterlineTranslator({})).to.throw(TypeError, /Expected models to be a valid waterline models object/);
+        expect(() => new WaterlineTranslator('asdf')).to.throw(TypeError, /Expected models to be a valid waterline models object/);
+        expect(() => new WaterlineTranslator(models)).to.not.throw(TypeError, /Expected models to be a valid waterline models object/);
       });
     });
     describe('#getModelsNames()', function () {
-      it('should returns an array containing the names of the stored models');
+      it('should returns an array containing the names of the stored models', function () {
+        const expected = ['group', 'user'];
+        const result = WT.getModelsNames();
+        expect(result).to.deep.equal(expected);
+      });
     });
     describe('#parseModelProperties(modelName)', function () {
       it('should returns an object containing valid GraysQL fields');
