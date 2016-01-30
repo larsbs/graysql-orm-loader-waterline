@@ -37,6 +37,8 @@
     "graysql-orm-loader": "^0.1.1",
     "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
+    "rmdir": "^1.2.0",
+    "sails-disk": "^0.10.8",
     "waterline": "^0.10.31"
   }
 }
