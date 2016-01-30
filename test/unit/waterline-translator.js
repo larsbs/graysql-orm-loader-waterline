@@ -123,9 +123,32 @@ module.exports = function (WaterlineTranslator) {
       });
     });
     describe('#getArgsForUpdate(modelName)', function () {
-      it('should return an object containing valid GraysQL args');
-      it('should return all the arguments needed to update an entity of the model');
-      it('should return non nullable arguments as such');
+      let resultForGroup;
+      let resultForUser;
+      before(function () {
+        resultForGroup = WT.getArgsForUpdate('group');
+        resultForUser = WT.getArgsForUpdate('user');
+      });
+      it('should return all the arguments needed to update an entity of the model', function () {
+        const expectedForGroup = ['id', 'name', 'members'];
+        const expectedForUser = ['id', 'nick', 'group'];
+        expect(resultForGroup).to.include.keys(expectedForGroup);
+        expect(resultForUser).to.include.keys(expectedForUser);
+      });
+      it('should return non nullable arguments as such', function () {
+        const expectedForGroup = {
+          id: { type: 'Int!' },
+          name: { type: 'String!' },
+          members: { type: '[Int]' }
+        };
+        const expectedForUser = {
+          id: { type: 'Int!' },
+          nick: { type: 'String!' },
+          group: { type: 'Int' }
+        };
+        expect(resultForGroup).to.deep.equal(expectedForGroup);
+        expect(resultForUser).to.deep.equal(expectedForUser);
+      });
     });
     describe('#getArgsForDelete(modelName)', function () {
       it('should return an object containing vsalid GraysQL args');

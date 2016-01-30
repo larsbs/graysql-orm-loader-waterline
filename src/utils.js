@@ -1,6 +1,7 @@
 'use strict';
 
-module.exports = {
+let Utils;
+module.exports = Utils = {
   areWaterlineModels(models) {
     if (typeof models !== 'object' || Array.isArray(models)) {
       return false;
@@ -32,5 +33,26 @@ module.exports = {
         default:
           throw new Error(`Unsupported type ${type}`);
     }
+  },
+  getArgs(attributes, ignoreKeys) {
+    const args = {};
+    for (const key in attributes) {
+      if (ignoreKeys.indexOf(key) < 0) {
+        const attribute = attributes[key];
+        if (Utils.isAssociation(attribute)) {
+          if (attribute.collection) {
+            args[key] = { type: '[Int]' };
+          }
+          else {
+            args[key] = { type: 'Int' };
+          }
+        }
+        else {
+          args[key] = { type: Utils.parseTypeToGraysQLType(attribute.type) };
+          args[key].type = (attribute.required || key === 'id') ? args[key].type + '!' : args[key].type;
+        }
+      }
+    }
+    return args;
   }
 };
