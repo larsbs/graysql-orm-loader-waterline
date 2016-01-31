@@ -92,7 +92,9 @@ module.exports = function (WaterlineTranslator) {
         const resultForGroup = WT.parseModelAssociations('group', true);
         const resultForUser = WT.parseModelAssociations('user', true);
         expect(resultForGroup.members.type).to.equal(expectedForGroup.members.type);
-        expect(''+resultForGroup.members.resolve).to.equal(''+expectedForGroup.members.resolve);
+        //expect(''+resultForGroup.members.resolve).to.equal(''+expectedForGroup.members.resolve);
+        expect(resultForGroup.members.resolve).to.not.be.null;
+        expect(resultForGroup.members.resolve).to.not.be.undefined;
         expect(resultForUser).to.deep.equal(expectedForUser);
       });
     });
