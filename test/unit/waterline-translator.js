@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('fs');
 const path = require('path');
 const rmdir = require('rmdir');
 const expect = require('chai').expect;
@@ -13,19 +12,23 @@ module.exports = function (WaterlineTranslator) {
 
     let models;
     let WT;
+    let ORM;
     before(function (done) {
-      bootstrapWaterline(m => {
+      bootstrapWaterline((m, orm) => {
         models = m.collections;
         WT = new WaterlineTranslator(models);
+        ORM = orm;
         done();
       });
     });
 
     after(function (done) {
+      ORM.teardown();
       rmdir(path.resolve(__dirname, '../../.tmp'), (err, dirs, files) => {
         if (err) {
           throw new Error(err);
         }
+        console.log('### .tmp dir deleted');
         done();
       });
     });

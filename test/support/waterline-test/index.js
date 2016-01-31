@@ -3,12 +3,10 @@ const Models = require('./models');
 const config = require('./config');
 
 
-const ORM = new Waterline();
-ORM.loadCollection(Models.Group);
-ORM.loadCollection(Models.User);
-
-
 module.exports = function bootstrap(cb) {
+  const ORM = new Waterline();
+  ORM.loadCollection(Models.Group);
+  ORM.loadCollection(Models.User);
   ORM.initialize(config, (err, models) => {
     if (err) {
       throw new Error(err);
@@ -42,7 +40,7 @@ module.exports = function bootstrap(cb) {
 
       group1.members.add([user1.id, user2.id]);
       group2.members.add([user3.id]);
-      Promise.all([group1.save(), group2.save()]).then(cb(models));
+      Promise.all([group1.save(), group2.save()]).then(cb(models, ORM));
     })
     .catch(err => console.error(err));
   });
