@@ -39,7 +39,7 @@ The tests are written with [mocha](https://mochajs.org/) and can be run with the
 $ npm test
 ```
 
-To get code coverage repors, run the following command:
+To get code coverage reports, run the following command:
 
 ```bash
 $ npm run cover
