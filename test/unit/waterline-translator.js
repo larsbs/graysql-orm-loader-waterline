@@ -175,8 +175,29 @@ module.exports = function (WaterlineTranslator) {
       });
     });
     describe('#resolveById(modelName)', function () {
-      it('should return a function that returns a single entity');
-      it('should return a function that returns an entity of the specified model');
+      let expectedGroup;
+      let expectedUser;
+      before(function (done) {
+        const g = models.group.findOneById(1).populate('members');
+        const u = models.user.findOneById(1).populate('group');
+        Promise.all([g, u]).then(result => {
+          expectedGroup = result[0];
+          expectedUser = result[1];
+          done();
+        });
+      });
+      it.skip('should return a promise that returns a single entity', function (done) {
+        const resultFnGroup = WT.resolveById('group')(null, { id: 1 });
+        const resultFnUser = WT.resolveById('user')(null, { id: 1 });
+        Promise.all([resultFnGroup, resultFnUser]).then(result => {
+          const resultGroup = result[0];
+          const resultUser = result[1];
+          expect(resultGroup).to.equal(expectedGroup);
+          expect(resultUser).to.equal(expectedUser);
+          done();
+        })
+        .catch(err => done(err));
+      });
     });
     describe('#resolveAll(modelName)', function () {
       it('should return a function that returns multiple entities');

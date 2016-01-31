@@ -47,10 +47,25 @@ module.exports = function (Utils) {
       });
     });
     describe('#parseTypeToGraysQLType(type)', function () {
-      it('should return `Int` for type `integer`');
-      it('should return `String` for type `string`');
-      it('should return `Date` for type `datetime`');
-      it('should throw an error for an unknown type');
+      it('should return `Int` for type `integer`', function () {
+        const expected = 'Int';
+        const result = Utils.parseTypeToGraysQLType('integer');
+        expect(result).to.equal(expected);
+      });
+      it('should return `String` for type `string`', function () {
+        const expected = 'String';
+        const result = Utils.parseTypeToGraysQLType('string');
+        expect(result).to.equal(expected);
+      });
+      it('should return `Date` for type `datetime`', function () {
+        const expected = 'Date';
+        const result = Utils.parseTypeToGraysQLType('datetime');
+        expect(result).to.equal(expected);
+      });
+      it('should throw an error for an unknown type', function () {
+        const fn = Utils.parseTypeToGraysQLType.bind(Utils, 'unknown type');
+        expect(fn).to.throw(Error, /Unsupported type/);
+      });
     });
 
   });

@@ -54,5 +54,7 @@ module.exports = Utils = {
       }
     }
     return args;
+  },
+  makeCircular(entity, models) {
   }
 };

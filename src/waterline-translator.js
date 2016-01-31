@@ -74,6 +74,7 @@ class WaterlineTranslator {
   }
 
   resolveById(modelName) {
+    return (root, args) => Utils.makeCircular(this._models[modelName].findOneById(args.id), this._models);
   }
 
   resolveAll(modelName) {
