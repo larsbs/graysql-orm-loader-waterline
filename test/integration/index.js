@@ -16,18 +16,21 @@ module.exports = function () {
 
     let GQL;
     let Schema;
+    let ORM;
     before(function (done) {
       GQL = new GraysQL();
       GQL.use(ORMLoader);
 
-      boostrapWaterline(models => {
+      boostrapWaterline(models, orm => {
         GQL.loadFromORM(new WaterlineTranslator(models.collections));
         Schema = GQL.generateSchema();
+        ORM = orm;
         done();
       });
     });
 
     after(function (done) {
+      ORM.teardown();
       rmdir(path.resolve(__dirname, '../../.tmp'), (err, dirs, files) => {
         if (err) {
           throw new Error(err);
