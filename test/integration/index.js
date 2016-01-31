@@ -21,7 +21,7 @@ module.exports = function () {
       GQL = new GraysQL();
       GQL.use(ORMLoader);
 
-      boostrapWaterline(models, orm => {
+      boostrapWaterline((models, orm) => {
         GQL.loadFromORM(new WaterlineTranslator(models.collections));
         Schema = GQL.generateSchema();
         ORM = orm;
