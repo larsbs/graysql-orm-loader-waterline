@@ -16,6 +16,15 @@ $ npm install graysql-orm-waterline
 Here is an example using [Sails.js](http://sailsjs.org/) and [Waterline](https://github.com/balderdashy/waterline).
 
 ```javascript
+const GraysQL = require('graysql');
+const ORMLoader = require('graysql-orm-loader');
+const WaterlineTranslator = require('graysql-orm-loader-waterline');
+
+const GQL = new GraysQL();
+GQL.use(ORMLoader);
+
+GQL.loadFromORM(new WaterlineTranslator(sails.models));
+const Schema = GQL.generateSchema();
 ```
 
 ## Examples ##
