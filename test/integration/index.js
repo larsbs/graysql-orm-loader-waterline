@@ -22,9 +22,14 @@ module.exports = function () {
       GQL.use(ORMLoader);
 
       boostrapWaterline((models, orm) => {
-        GQL.loadFromORM(new WaterlineTranslator(models.collections));
-        Schema = GQL.generateSchema();
         ORM = orm;
+        try {
+          GQL.loadFromORM(new WaterlineTranslator(models.collections));
+          Schema = GQL.generateSchema();
+        }
+        catch (err) {
+          return done(err);
+        }
         done();
       });
     });

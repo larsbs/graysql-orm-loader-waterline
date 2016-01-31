@@ -28,7 +28,6 @@ module.exports = function (WaterlineTranslator) {
         if (err) {
           throw new Error(err);
         }
-        console.log('### .tmp dir deleted');
         done();
       });
     });
