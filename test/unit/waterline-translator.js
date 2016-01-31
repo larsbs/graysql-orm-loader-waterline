@@ -184,39 +184,135 @@ module.exports = function (WaterlineTranslator) {
           expectedGroup = result[0];
           expectedUser = result[1];
           done();
-        });
+        })
+        .catch(err => done(err));
       });
-      it.skip('should return a promise that returns a single entity', function (done) {
+      it('should return a function that returns a single entity', function (done) {
         const resultFnGroup = WT.resolveById('group')(null, { id: 1 });
         const resultFnUser = WT.resolveById('user')(null, { id: 1 });
         Promise.all([resultFnGroup, resultFnUser]).then(result => {
           const resultGroup = result[0];
           const resultUser = result[1];
-          expect(resultGroup).to.equal(expectedGroup);
-          expect(resultUser).to.equal(expectedUser);
+          expect(resultGroup.toObject()).to.deep.equal(expectedGroup.toObject());
+          expect(resultUser.toObject()).to.deep.equal(expectedUser.toObject());
           done();
         })
         .catch(err => done(err));
       });
     });
     describe('#resolveAll(modelName)', function () {
-      it('should return a function that returns multiple entities');
-      it('should return a function that returns entities of the specified model');
+      let expectedGroups;
+      let expectedUsers;
+      before(function (done) {
+        const g = models.group.find().populate('members');
+        const u = models.user.find().populate('group');
+        Promise.all([g, u]).then(result => {
+          expectedGroups = result[0];
+          expectedUsers = result[1];
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should return a function that returns multiple entities', function (done) {
+        const resultFnGroups = WT.resolveAll('group')();
+        const resultFnUsers = WT.resolveAll('user')();
+        Promise.all([resultFnGroups, resultFnUsers]).then(result => {
+          const resultGroups = result[0];
+          const resultUsers = result[1];
+          expect(resultGroups.map(x => x.toObject())).to.deep.equal(expectedGroups.map(x => x.toObject()));
+          expect(resultUsers.map(x => x.toObject())).to.deep.equal(expectedUsers.map(x => x.toObject()));
+          done();
+        })
+        .catch(err => done(err));
+      });
     });
     describe('#resolveCreate(modelName)', function () {
-      it('should return a function that creates a new entity of the specified model');
+      it('should return a function that creates a new entity of the specified model', function (done) {
+        const resultCreateForGroup = WT.resolveCreate('group')(null, { name: 'Group 3' });
+        const resultCreateForUser = WT.resolveCreate('user')(null, { nick: 'Imlach' });
+        Promise.all([resultCreateForGroup, resultCreateForUser])
+        .then(result => {
+          const g = models.group.findOneById(result[0].id);
+          const u = models.user.findOneById(result[1].id);
+          return Promise.all([g, u]);
+        })
+        .then(result => {
+          expect(result[0]).to.not.be.undefined;
+          expect(result[1]).to.not.be.undefined;
+          done();
+        })
+        .catch(err => done(err));
+      });
     });
     describe('#resolveUpdate(modelName)', function () {
-      it('should return a function that updates an entity of the specified model');
+      it('should return a function that updates an entity of the specified model', function (done) {
+        const resultUpdateForGroup = WT.resolveUpdate('group')(null, { id: 1, name: 'Updated Name' });
+        const resultUpdateForUser = WT.resolveUpdate('user')(null, { id: 1, nick: 'Larsvoid', group: 2 });
+        Promise.all([resultUpdateForGroup, resultUpdateForUser])
+        .then(result => {
+          const g = models.group.findOneById(1);
+          const u = models.user.findOneById(1).populate('group');
+          return Promise.all([g, u]);
+        })
+        .then(result => {
+          expect(result[0].name).to.equal('Updated Name');
+          expect(result[1].nick).to.equal('Larsvoid');
+          expect(result[1].group.id).to.equal(2);
+          done();
+        })
+        .catch(err => done(err));
+      });
     });
     describe('#resolveDelete(modelName)', function () {
-      it('should return a function that deletes an entity of the specified model');
+      it('should return a function that deletes an entity of the specified model', function (done) {
+        const resultDeleteForGroup = WT.resolveDelete('group')(null, { id: 1 });
+        const resultDeleteForUser = WT.resolveDelete('user')(null, { id: 1 });
+        Promise.all([resultDeleteForGroup, resultDeleteForUser])
+        .then(result => {
+          const g = models.group.findOneById(1);
+          const u = models.user.findOneById(1);
+          return Promise.all([g, u]);
+        })
+        .then(result => {
+          expect(result[0]).to.be.undefined;
+          expect(result[1]).to.be.undefined;
+          done();
+        })
+        .catch(err => done(err));
+      });
     });
     describe('#resolveNodeId(modelName)', function () {
-      it('should return a function that resolves an entity of the specified model by its id');
+      it('should return a function that resolves an entity of the specified model by its id', function (done) {
+        const resultNodeIdForGroup = WT.resolveNodeId('group')(2);
+        const resultNodeIdForUser = WT.resolveNodeId('user')(2);
+        Promise.all([resultNodeIdForGroup, resultNodeIdForUser])
+        .then(result => {
+          const g = models.group.findOneById(2).populate('members');
+          const u = models.user.findOneById(2).populate('group');
+          return Promise.all([g, u, ...result]);
+        })
+        .then(result => {
+          expect(result[0].toObject()).to.deep.equal(result[2].toObject());
+          expect(result[1].toObject()).to.deep.equal(result[3].toObject());
+          done();
+        })
+        .catch(err => done(err));
+      });
     });
     describe('#resolveIsTypeOf(modelName)', function () {
-      it('should return a function that resolves the type of the entities of the specified model');
+      it('should return a function that resolves the type of the entities of the specified model', function (done) {
+        const g = models.group.findOneById(2).populate('members');
+        const u = models.user.findOneById(2).populate('group');
+        Promise.all([g, u])
+        .then(result => {
+          const resultIsTypeOfForGroup = WT.resolveIsTypeOf('group')(result[0]);
+          const resultIsTypeOfForUser = WT.resolveIsTypeOf('user')(result[1]);
+          expect(resultIsTypeOfForGroup).to.be.true;
+          expect(resultIsTypeOfForUser).to.be.true;
+          done();
+        })
+        .catch(err => done(err));
+      });
     });
   });
 

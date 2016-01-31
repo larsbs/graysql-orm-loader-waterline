@@ -55,6 +55,15 @@ module.exports = Utils = {
     }
     return args;
   },
-  makeCircular(entity, models) {
+  populateAll(context) {
+    // Necessary because populateAll from waterline is broken outside of sails
+    for (const key in context._context.attributes) {
+      if (Utils.isAssociation(context._context.attributes[key])) {
+        context.populate(key);
+      }
+    }
+    return context;
+  },
+  makeCircularJSON(entity, models) {
   }
 };

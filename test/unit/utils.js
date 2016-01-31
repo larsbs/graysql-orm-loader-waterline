@@ -67,6 +67,33 @@ module.exports = function (Utils) {
         expect(fn).to.throw(Error, /Unsupported type/);
       });
     });
+    describe('#makeCircularJSON(entity, models)', function () {
+      let expectedForGroup;
+      let expectedForUser;
+      before(function () {
+        const user1 = {
+          id: 1,
+          nick: 'Lars'
+        };
+        const user2 = {
+          id: 2,
+          nick: 'Deathvoid'
+        };
+        const group = {
+          id: 1,
+          name: 'Group 1',
+          members: [user1, user2]
+        };
+        user1.group = group;
+        user2.group = group;
+        expectedForGroup = group;
+        expectedForUser = user1;
+      });
+      it.skip('should populate all associations in the entity', function () {
+      });
+      it.skip('should make every association reference the original entity back', function () {
+      });
+    });
 
   });
 

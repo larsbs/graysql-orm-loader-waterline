@@ -74,28 +74,35 @@ class WaterlineTranslator {
   }
 
   resolveById(modelName) {
-    return (root, args) => Utils.makeCircular(this._models[modelName].findOneById(args.id), this._models);
+    return (root, args) => Utils.populateAll(this._models[modelName].findOneById(args.id));
   }
 
   resolveAll(modelName) {
+    return (root, args) => Utils.populateAll(this._models[modelName].find());
   }
 
   resolveCreate(modelName) {
+    return (root, args) => this._models[modelName].create(args);
   }
 
   resolveUpdate(modelName) {
+    return (root, args) => {
+      const id = args.id;
+      delete args.id;
+      return this._models[modelName].update({ id }, args);
+    };
   }
 
   resolveDelete(modelName) {
+    return (root, args) => this._models[modelName].destroy({ id: args.id });
   }
 
   resolveNodeId(modelName) {
-  }
-
-  resolveNodeId(modelName) {
+    return id => Utils.populateAll(this._models[modelName].findOneById(id));
   }
 
   resolveIsTypeOf(modelName) {
+    return obj => obj instanceof this._models[modelName]._model;
   }
 
 }
