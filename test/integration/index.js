@@ -149,6 +149,136 @@ module.exports = function () {
     });
 
     describe('Relationship Queries', function () {
+      it('should allow us to query for the members of a group', function (done) {
+        const query = `query GetFullGroup {
+          group(id: 1) {
+            id,
+            name,
+            members {
+              id,
+              nick
+            }
+          }
+        }`;
+        const expected = {
+          data: {group: {
+            id: 1,
+            name: 'Group 1',
+            members: [{
+              id: 1,
+              nick: 'Lars'
+            }, {
+              id: 2,
+              nick: 'Deathvoid'
+            }]
+          }}
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to query for the group of an user', function (done) {
+        const query = `query GetFullUser {
+          user(id: 1) {
+            id,
+            nick,
+            group {
+              id,
+              name
+            }
+          }
+        }`;
+        const expected = {
+          data: {user: {
+            id: 1,
+            nick: 'Lars',
+            group: {
+              id: 1,
+              name: 'Group 1'
+            }
+          }}
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+    });
+
+    describe('Circular Queries', function () {
+      it('should allow us to query for the group of the members of a group', function (done) {
+        const query = `query GetCircularGroup {
+          group(id: 1) {
+            id,
+            name,
+            members {
+              id,
+              nick,
+              group {
+                id
+              }
+            }
+          }
+        }`;
+        const expected = {
+          data: {group: {
+            id: 1,
+            name: 'Group 1',
+            members: [{
+              id: 1,
+              nick: 'Lars',
+              group: { id: 1 }
+            }, {
+              id: 2,
+              nick: 'Deathvoid',
+              group: { id: 2 }
+            }]
+          }}
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to query for the members of the group of an user', function (done) {
+        const query = `query GetCircularUser {
+          user(id: 1) {
+            id,
+            nick,
+            group {
+              id,
+              name,
+              members {
+                id
+              }
+            }
+          }
+        }`;
+        const expected = {
+          data: {user: {
+            id: 1,
+            nick: 'Lars',
+            group: {
+              id: 1,
+              name: 'Group 1',
+              members: [{ id: 1 }, { id: 2 }]
+            }
+          }}
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
     });
 
   });

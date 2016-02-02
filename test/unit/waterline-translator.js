@@ -223,7 +223,6 @@ module.exports = function (WaterlineTranslator) {
         Promise.all([resultFnGroups, resultFnUsers]).then(result => {
           const resultGroups = result[0];
           const resultUsers = result[1];
-          console.log(result[0]);
           expect(resultGroups.map(x => x.toObject())).to.deep.equal(expectedGroups.map(x => x.toObject()));
           expect(resultUsers.map(x => x.toObject())).to.deep.equal(expectedUsers.map(x => x.toObject()));
           done();
