@@ -24,7 +24,7 @@
     "url": "https://github.com/larsbs/graysql-orm-loader-waterline.git"
   },
   "peerDependencies": {
-    "graysql": "^0.3.1",
+    "graysql": "^0.4.0",
     "graysql-orm-loader": "^0.1.1"
   },
   "dependencies": {},
@@ -33,8 +33,8 @@
     "eslint": "^1.10.3",
     "graphql": "^0.4.14",
     "graphql-relay": "^0.3.6",
-    "graysql": "^0.3.1",
-    "graysql-orm-loader": "^0.1.1",
+    "graysql": "^0.4.0",
+    "graysql-orm-loader": "^0.1.2",
     "istanbul": "^0.4.2",
     "mocha": "^2.4.5",
     "rmdir": "^1.2.0",

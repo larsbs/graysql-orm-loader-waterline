@@ -78,7 +78,10 @@ class WaterlineTranslator {
   }
 
   resolveAll(modelName) {
-    return (root, args) => Utils.populateAll(this._models[modelName].find());
+    return (root, args) => {
+      console.log('#### WTF!!!!');
+      return Utils.populateAll(this._models[modelName].find());
+    }
   }
 
   resolveCreate(modelName) {

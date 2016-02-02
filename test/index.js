@@ -1,15 +1,13 @@
 'use strict';
 
-const WaterlineTranslator = require('../src/waterline-translator');
-const Utils = require('../src/utils');
 
 describe('UNIT TESTS', function() {
   describe('WaterlineTranslator', function(){
-    require('./unit/waterline-translator')(WaterlineTranslator);
-    require('./unit/utils')(Utils);
+    require('./unit/waterline-translator');
+    require('./unit/utils');
   });
 });
 
 describe('INTEGRATION TESTS', function () {
-  require('./integration')();
+  require('./integration');
 });

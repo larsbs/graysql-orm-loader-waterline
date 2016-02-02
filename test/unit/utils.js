@@ -97,4 +97,4 @@ module.exports = function (Utils) {
 
   });
 
-};
+}(require('../../src/utils'));
