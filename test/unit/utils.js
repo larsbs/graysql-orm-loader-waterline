@@ -149,17 +149,7 @@ module.exports = function (Utils) {
         })
         .catch(err => done(err));
       });
-      it('should make every association reference the original entity back', function (done) {
-        resultForGroup.members.then(members => {
-          console.log(members);
-          done();
-        });
-        //expect(resultForGroup.name).to.equal(expectedForGroup.name);
-        //expect(resultForUser.nick).to.equal(expectedForUser.nick);
-        //expect(resultForGroup.members).to.deep.equal(expectedForGroup.members);
-        //expect(resultForUser.group).to.deep.equal(expectedForUser.group);
-        //expect(resultForGroup.members[0].group).to.deep.equal(expectedForGroup.members[0].group);
-        //expect(resultForUser.group.members).to.deep.equal(expectedForUser.group.members);
+      it.skip('should make every association reference the original entity back', function (done) {
       });
     });
 

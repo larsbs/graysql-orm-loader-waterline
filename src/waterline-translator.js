@@ -44,7 +44,7 @@ class WaterlineTranslator {
           if (useRelay) {
             associations[key] = {
               type: `@>${association.collection}`,
-              resolve: (model, args) => model[key]
+              resolve: model => model[key]
             };
           }
           else {
@@ -69,16 +69,16 @@ class WaterlineTranslator {
     return Utils.getArgs(model.attributes, ignoreKeys);
   }
 
-  getArgsForDelete(modelName) {
+  getArgsForDelete() {
     return { id: { type: 'Int!' } };
   }
 
   resolveById(modelName) {
-    return (root, args) => Utils.populateAll(this._models[modelName].findOneById(args.id));
+    return (root, args) => Utils.makeCircular(this._models[modelName].findOneById(args.id), this._models);
   }
 
   resolveAll(modelName) {
-    return (root, args) => Utils.populateAll(this._models[modelName].find());
+    return () => Utils.makeCircular(this._models[modelName].find(), this._models);
   }
 
   resolveCreate(modelName) {

@@ -9,10 +9,10 @@ function isManyRelation(relation) {
 function createRelationPromise(id, relation, models) {
   if (isManyRelation(relation)) {
     const via = relation.attribute.via;
-    return models[relation.attribute.collection].find({ [via]: id });
+    return Utils.makeCircular(models[relation.attribute.collection].find({ [via]: id }), models);
   }
   else {
-    return models[relation.attribute.model].findOneById(id);
+    return Utils.makeCircular(models[relation.attribute.model].findOneById(id), models);
   }
 }
 
@@ -92,9 +92,20 @@ module.exports = Utils = {
       }
     }
     return context.then(result => {
-      result = result.toObject();
-      for (const relation of relations) {
-        result[relation.key] = createRelationPromise(result.id, relation, models);
+      if (Array.isArray(result)) {
+        result = result.map(x => x.toObject())
+        .map(e => {
+          for (const relation of relations) {
+            e[relation.key] = () => createRelationPromise(e.id, relation, models);
+          }
+          return e;
+        });
+      }
+      else {
+        result = result.toObject();
+        for (const relation of relations) {
+          result[relation.key] = () => createRelationPromise(result.id, relation, models);
+        }
       }
       return result;
     });
