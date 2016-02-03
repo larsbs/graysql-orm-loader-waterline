@@ -89,12 +89,22 @@ class WaterlineTranslator {
     return (root, args) => {
       const id = args.id;
       delete args.id;
-      return this._models[modelName].update({ id }, args);
+      return this._models[modelName].update({ id }, args).then(result => {
+        // This is needed in order for the mutation to return updated data.
+        // This is because update always returns an array of data.
+        return result[0];
+      });
     };
   }
 
   resolveDelete(modelName) {
-    return (root, args) => this._models[modelName].destroy({ id: args.id });
+    return (root, args) => {
+      return this._models[modelName].destroy({ id: args.id }).then(result => {
+        // This is needed in order for the mutation to return deleted data.
+        // This is because delete always returns an array of data.
+        return result[0];
+      });
+    }
   }
 
   resolveNodeId(modelName) {

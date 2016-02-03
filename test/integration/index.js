@@ -362,7 +362,7 @@ module.exports = function () {
               name: 'Group One'
             }
           }
-        }
+        };
         graphql.graphql(Schema, mutation)
         .then(result => {
           expect(result).to.deep.equal(expected);
@@ -370,9 +370,49 @@ module.exports = function () {
         })
         .catch(err => done(err));
       });
-      it.skip('should allow us to delete an user', function (done) {
+      it('should allow us to delete an user', function (done) {
+        const mutation = `mutation DeleteUser {
+          deleteUser(id: 2) {
+            id,
+            nick
+          }
+        }`;
+        const expected = {
+          data: {
+            deleteUser: {
+              id: 2,
+              nick: 'Deathvoid'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
       });
-      it.skip('should allow us to delete a group', function (done) {
+      it('should allow us to delete a group', function (done) {
+        const mutation = `mutation DeleteGroup {
+          deleteGroup(id: 2) {
+            id,
+            name
+          }
+        }`;
+        const expected = {
+          data: {
+            deleteGroup: {
+              id: 2,
+              name: 'Group 2'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
       });
     });
 
