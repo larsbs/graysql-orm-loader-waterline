@@ -1,5 +1,22 @@
 'use strict';
 
+
+function isManyRelation(relation) {
+  return !!relation.attribute.collection;
+}
+
+
+function createRelationPromise(id, relation, models) {
+  if (isManyRelation(relation)) {
+    const via = relation.attribute.via;
+    return models[relation.attribute.collection].find({ [via]: id });
+  }
+  else {
+    return models[relation.attribute.model].findOneById(id);
+  }
+}
+
+
 let Utils;
 module.exports = Utils = {
   areWaterlineModels(models) {
@@ -64,6 +81,22 @@ module.exports = Utils = {
     }
     return context;
   },
-  makeCircularJSON(entity, models) {
+  makeCircular(context, models) {
+    const relations = [];
+    for (const key in context._context.attributes) {
+      if (Utils.isAssociation(context._context.attributes[key])) {
+        relations.push({
+          key,
+          attribute: context._context.attributes[key]
+        });
+      }
+    }
+    return context.then(result => {
+      result = result.toObject();
+      for (const relation of relations) {
+        result[relation.key] = createRelationPromise(result.id, relation, models);
+      }
+      return result;
+    });
   }
 };
