@@ -281,6 +281,28 @@ module.exports = function () {
       });
     });
 
+    describe('Basic Mutations', function () {
+      it.skip('should allow us to create a new user', function () {
+      });
+      it.skip('should allow us to create a new group', function () {
+      });
+      it.skip('should allow us to update an user', function () {
+      });
+      it.skip('should allow us to update a group', function () {
+      });
+      it.skip('should allow us to delete an user', function () {
+      });
+      it.skip('should allow us to delete a group', function () {
+      });
+    });
+
+    describe('Relationship Mutations', function () {
+      it.skip('should allow us to add an user to a group', function () {
+      });
+      it.skip('should allow us to remove an user from a group', function () {
+      });
+    });
+
   });
 
 }();
