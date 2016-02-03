@@ -282,17 +282,97 @@ module.exports = function () {
     });
 
     describe('Basic Mutations', function () {
-      it.skip('should allow us to create a new user', function () {
+      it('should allow us to create a new user', function (done) {
+        const mutation = `mutation AddUser {
+          createUser(nick: "Imlach") {
+            id,
+            nick
+          }
+        }`;
+        const expected = {
+          data: {
+            createUser: {
+              id: 4,
+              nick: 'Imlach'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
       });
-      it.skip('should allow us to create a new group', function () {
+      it('should allow us to create a new group', function (done) {
+        const mutation = `mutation AddGroup {
+          createGroup(name: "Group 3") {
+            id,
+            name
+          }
+        }`;
+        const expected = {
+          data: {
+            createGroup: {
+              id: 3,
+              name: 'Group 3'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
       });
-      it.skip('should allow us to update an user', function () {
+      it('should allow us to update an user', function (done) {
+        const mutation = `mutation UpdateUser {
+          updateUser(id: 1, nick: "Fienhard") {
+            id,
+            nick
+          }
+        }`;
+        const expected = {
+          data: {
+            updateUser: {
+              id: 1,
+              nick: 'Fienhard'
+            }
+          }
+        }
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
       });
-      it.skip('should allow us to update a group', function () {
+      it('should allow us to update a group', function (done) {
+        const mutation = `mutation UpdateGroup {
+          updateGroup(id: 1, name: "Group One") {
+            id,
+            name
+          }
+        }`;
+        const expected = {
+          data: {
+            updateGroup: {
+              id: 1,
+              name: 'Group One'
+            }
+          }
+        }
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
       });
-      it.skip('should allow us to delete an user', function () {
+      it.skip('should allow us to delete an user', function (done) {
       });
-      it.skip('should allow us to delete a group', function () {
+      it.skip('should allow us to delete a group', function (done) {
       });
     });
 
