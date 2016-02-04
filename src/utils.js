@@ -101,7 +101,7 @@ module.exports = Utils = {
           return e;
         });
       }
-      else {
+      else if (result) {
         result = result.toObject();
         for (const relation of relations) {
           result[relation.key] = () => createRelationPromise(result.id, relation, models);

@@ -432,8 +432,8 @@ module.exports = function () {
         }`;
         Promise.all([graphql.graphql(Schema, addUser), graphql.graphql(Schema, addGroup)])
         .then(result => {
-          addedUserId = result[0].id;
-          addedGroupId = result[1].id;
+          addedUserId = result[0].data.createUser.id;
+          addedGroupId = result[1].data.createGroup.id;
           done();
         })
         .catch(err => done);
@@ -479,7 +479,47 @@ module.exports = function () {
         })
         .catch(err => done(err));
       });
-      it.skip('should allow us to remove an user from a group', function () {
+      it('should allow us to remove an user from a group', function (done) {
+        const mutation = `mutation UpdateUser {
+          updateUser(id: ${addedUserId}, group: -1) {
+            id,
+            nick
+          }
+        }`;
+        const expected = {
+          data: {
+            updateUser: {
+              id: addedUserId,
+              nick: 'Vanul'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          const query = `query GetUser {
+            user(id: ${addedUserId}) {
+              id,
+              nick,
+              group {
+                id
+              }
+            }
+          }`;
+          expect(result).to.deep.equal(expected);
+          return graphql.graphql(Schema, query);
+        })
+        .then(result => {
+          const expected = {
+            data: {user: {
+              id: addedUserId,
+              nick: 'Vanul',
+              group: null
+            }}
+          };
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
       });
     });
 
