@@ -9,7 +9,7 @@ const GraysQL = require('graysql');
 const ORMLoader = require('graysql-orm-loader');
 
 const WaterlineTranslator = require('../../src/waterline-translator');
-const boostrapWaterline = require('../support/waterline-test');
+const bootstrapWaterline = require('../support/waterline-test');
 
 
 module.exports = function () {
@@ -24,7 +24,7 @@ module.exports = function () {
       GQL = new GraysQL();
       GQL.use(ORMLoader);
 
-      boostrapWaterline((m, orm) => {
+      bootstrapWaterline((m, orm) => {
         ORM = orm;
         models = m.collections;
         try {
@@ -524,5 +524,7 @@ module.exports = function () {
     });
 
   });
+
+  require('./relay-integration');
 
 }();
