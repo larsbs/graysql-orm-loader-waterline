@@ -44,7 +44,14 @@ class WaterlineTranslator {
           if (useRelay) {
             associations[key] = {
               type: `@>${association.collection}`,
-              resolve: model => model[key]
+              resolve: model => {
+                if (typeof model[key] === 'function') {
+                  return model[key]();
+                }
+                else {
+                  return model[key];
+                }
+              }
             };
           }
           else {

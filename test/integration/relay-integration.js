@@ -104,6 +104,122 @@ module.exports = function () {
         })
         .catch(err => done(err));
       });
+      it('should allow us to query for a single group', function (done) {
+        const query = `query GetGroup {
+          group(id: 1) {
+            id,
+            name
+          }
+        }`;
+        const expected = {
+          data: {
+            group: {
+              id: 'Z3JvdXA6MQ==',
+              name: 'Group 1'
+            }
+          }
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to query for a single user', function (done) {
+        const query = `query GetUser {
+          user(id: 1) {
+            id,
+            nick
+          }
+        }`;
+        const expected = {
+          data: {
+            user: {
+              id: 'dXNlcjox',
+              nick: 'Lars'
+            }
+          }
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+    });
+
+    describe('Relationship Queries', function () {
+      it('should allow us to query for the members of a group', function (done) {
+        const query = `query GetFullGroup {
+          group(id: 1) {
+            id,
+            name,
+            members {
+              edges {
+                node {
+                  id,
+                  nick
+                }
+              }
+            }
+          }
+        }`;
+        const expected = {
+          data: {group: {
+            id: 'Z3JvdXA6MQ==',
+            name: 'Group 1',
+            members: {
+              edges: [{
+                node: {
+                  id: 'dXNlcjox',
+                  nick: 'Lars'
+                }
+              }, {
+                node: {
+                  id: 'dXNlcjoy',
+                  nick: 'Deathvoid'
+                }
+              }]
+            }
+          }}
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to query for the group of an user', function (done) {
+        const query = `query GetFullUser {
+          user(id: 1) {
+            id,
+            nick,
+            group {
+              id,
+              name
+            }
+          }
+        }`;
+        const expected = {
+          data: {user: {
+            id: 'dXNlcjox',
+            nick: 'Lars',
+            group: {
+              id: 'Z3JvdXA6MQ==',
+              name: 'Group 1'
+            }
+          }}
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
     });
 
   });
