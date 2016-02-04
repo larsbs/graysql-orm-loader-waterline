@@ -142,12 +142,12 @@ module.exports = function (WaterlineTranslator) {
       it('should return non nullable arguments as such', function () {
         const expectedForGroup = {
           id: { type: 'Int!' },
-          name: { type: 'String!' },
+          name: { type: 'String' },
           members: { type: '[Int]' }
         };
         const expectedForUser = {
           id: { type: 'Int!' },
-          nick: { type: 'String!' },
+          nick: { type: 'String' },
           group: { type: 'Int' }
         };
         expect(resultForGroup).to.deep.equal(expectedForGroup);

@@ -66,7 +66,7 @@ class WaterlineTranslator {
   getArgsForUpdate(modelName) {
     const model = this._models[modelName];
     const ignoreKeys = ['createdAt', 'updatedAt'];
-    return Utils.getArgs(model.attributes, ignoreKeys);
+    return Utils.getArgs(model.attributes, ignoreKeys, true);
   }
 
   getArgsForDelete() {
@@ -89,22 +89,28 @@ class WaterlineTranslator {
     return (root, args) => {
       const id = args.id;
       delete args.id;
-      return this._models[modelName].update({ id }, args).then(result => {
+      return this._models[modelName].update({ id }, args).then(() => {
         // This is needed in order for the mutation to return updated data.
         // This is because update always returns an array of data.
-        return result[0];
+        return Utils.makeCircular(this._models[modelName].findOneById(id), this._models);
       });
     };
   }
 
   resolveDelete(modelName) {
     return (root, args) => {
-      return this._models[modelName].destroy({ id: args.id }).then(result => {
-        // This is needed in order for the mutation to return deleted data.
-        // This is because delete always returns an array of data.
+      let deleted;
+      return Utils.makeCircular(this._models[modelName].findOneById(args.id)).then(result => {
+        deleted = result;
+        return this._models[modelName].destroy({ id: args.id });
+      })
+      .then(result => {
+        if(result[0]) {
+          return deleted;
+        }
         return result[0];
       });
-    }
+    };
   }
 
   resolveNodeId(modelName) {

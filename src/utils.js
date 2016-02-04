@@ -51,7 +51,7 @@ module.exports = Utils = {
           throw new Error(`Unsupported type ${type}`);
     }
   },
-  getArgs(attributes, ignoreKeys) {
+  getArgs(attributes, ignoreKeys, ignoreRequired) {
     const args = {};
     for (const key in attributes) {
       if (ignoreKeys.indexOf(key) < 0) {
@@ -66,7 +66,7 @@ module.exports = Utils = {
         }
         else {
           args[key] = { type: Utils.parseTypeToGraysQLType(attribute.type) };
-          args[key].type = (attribute.required || key === 'id') ? args[key].type + '!' : args[key].type;
+          args[key].type = (attribute.required && ! ignoreRequired || key === 'id') ? args[key].type + '!' : args[key].type;
         }
       }
     }

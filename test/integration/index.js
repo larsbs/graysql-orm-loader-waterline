@@ -417,7 +417,67 @@ module.exports = function () {
     });
 
     describe('Relationship Mutations', function () {
-      it.skip('should allow us to add an user to a group', function () {
+      let addedUserId;
+      let addedGroupId;
+      beforeEach(function (done) {
+        const addUser = `mutation AddUser {
+          createUser(nick: "Vanul") {
+            id
+          }
+        }`;
+        const addGroup = `mutation AddGroup {
+          createGroup(name: "GDO") {
+            id
+          }
+        }`;
+        Promise.all([graphql.graphql(Schema, addUser), graphql.graphql(Schema, addGroup)])
+        .then(result => {
+          addedUserId = result[0].id;
+          addedGroupId = result[1].id;
+          done();
+        })
+        .catch(err => done);
+      });
+      afterEach(function (done) {
+        const deleteUser = `mutation DeleteUser {
+          deleteUser(id: ${addedUserId})
+        }`;
+        const deleteGroup = `mutation DeleteGroup {
+          deleteGroup(id: ${addedGroupId})
+        }`;
+        Promise.all([graphql.graphql(Schema, deleteUser), graphql.graphql(Schema, deleteGroup)])
+        .then(result => {
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to add an user to a group', function (done) {
+        const mutation = `mutation UpdateGroup {
+          updateGroup(id: ${addedGroupId}, members: [${addedUserId}]) {
+            id,
+            name,
+            members {
+              id
+            }
+          }
+        }`;
+        const expected = {
+          data: {
+            updateGroup: {
+              id: addedGroupId,
+              name: 'GDO',
+              members: [{
+                id: addedUserId
+              }]
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
       });
       it.skip('should allow us to remove an user from a group', function () {
       });
