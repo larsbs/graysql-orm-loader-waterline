@@ -100,7 +100,7 @@ class WaterlineTranslator {
   resolveDelete(modelName) {
     return (root, args) => {
       let deleted;
-      return Utils.makeCircular(this._models[modelName].findOneById(args.id)).then(result => {
+      return Utils.makeCircular(this._models[modelName].findOneById(args.id), this._models).then(result => {
         deleted = result;
         return this._models[modelName].destroy({ id: args.id });
       })
@@ -114,11 +114,13 @@ class WaterlineTranslator {
   }
 
   resolveNodeId(modelName) {
-    return id => Utils.populateAll(this._models[modelName].findOneById(id));
+    return id => Utils.makeCircular(this._models[modelName].findOneById(id), this._models).then(result => {
+      return result;
+    });
   }
 
   resolveIsTypeOf(modelName) {
-    return obj => obj instanceof this._models[modelName]._model;
+    return obj => obj._model === this._models[modelName]._model;
   }
 
 }

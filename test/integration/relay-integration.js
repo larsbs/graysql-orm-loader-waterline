@@ -6,6 +6,7 @@ const rmdir = require('rmdir');
 const graphql = require('graphql');
 const GraphQLUtils = require('graphql/utilities');
 const GraysQL = require('graysql');
+const Graylay = require('graysql/extensions/graylay');
 const ORMLoader = require('graysql-orm-loader');
 
 const WaterlineTranslator = require('../../src/waterline-translator');
@@ -22,6 +23,7 @@ module.exports = function () {
     let models;
     before(function (done) {
       GQL = new GraysQL();
+      GQL.use(Graylay);
       GQL.use(ORMLoader);
 
       bootstrapWaterline((m, orm) => {
@@ -59,11 +61,39 @@ module.exports = function () {
         const expected = {
           data: {
             groups: [{
-              id: 1,
+              id: 'Z3JvdXA6MQ==',
               name: 'Group 1'
             }, {
-              id: 2,
+              id: 'Z3JvdXA6Mg==',
               name: 'Group 2'
+            }]
+          }
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to query for all the users', function (done) {
+        const query = `query GetUsers {
+          users {
+            id,
+            nick
+          }
+        }`;
+        const expected = {
+          data: {
+            users: [{
+              id: 'dXNlcjox',
+              nick: 'Lars'
+            }, {
+              id: 'dXNlcjoy',
+              nick: 'Deathvoid'
+            }, {
+              id: 'dXNlcjoz',
+              nick: 'Grishan'
             }]
           }
         };

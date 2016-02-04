@@ -92,21 +92,28 @@ module.exports = Utils = {
       }
     }
     return context.then(result => {
+      if ( ! result) {
+        return result;
+      }
+
       if (Array.isArray(result)) {
         result = result.map(x => x.toObject())
         .map(e => {
           for (const relation of relations) {
             e[relation.key] = () => createRelationPromise(e.id, relation, models);
           }
+          e._model = context._context._model;
           return e;
         });
       }
-      else if (result) {
+      else {
         result = result.toObject();
+        result._model = context._context._model;
         for (const relation of relations) {
           result[relation.key] = () => createRelationPromise(result.id, relation, models);
         }
       }
+
       return result;
     });
   }

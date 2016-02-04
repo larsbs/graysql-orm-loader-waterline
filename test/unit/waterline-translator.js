@@ -296,8 +296,8 @@ module.exports = function (WaterlineTranslator) {
           return Promise.all([g, u, ...result]);
         })
         .then(result => {
-          expect(result[0].toObject()).to.deep.equal(result[2].toObject());
-          expect(result[1].toObject()).to.deep.equal(result[3].toObject());
+          expect(result[0].toObject().id).to.deep.equal(result[2].id);
+          expect(result[1].toObject().id).to.deep.equal(result[3].id);
           done();
         })
         .catch(err => done(err));
@@ -309,8 +309,12 @@ module.exports = function (WaterlineTranslator) {
         const u = models.user.findOneById(2).populate('group');
         Promise.all([g, u])
         .then(result => {
-          const resultIsTypeOfForGroup = WT.resolveIsTypeOf('group')(result[0]);
-          const resultIsTypeOfForUser = WT.resolveIsTypeOf('user')(result[1]);
+          const resultGroup = result[0].toObject();
+          const resultUser = result[1].toObject();
+          resultGroup._model = models.group._model;
+          resultUser._model = models.user._model;
+          const resultIsTypeOfForGroup = WT.resolveIsTypeOf('group')(resultGroup);
+          const resultIsTypeOfForUser = WT.resolveIsTypeOf('user')(resultUser);
           expect(resultIsTypeOfForGroup).to.be.true;
           expect(resultIsTypeOfForUser).to.be.true;
           done();
