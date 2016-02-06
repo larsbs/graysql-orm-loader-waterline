@@ -89,7 +89,7 @@ class WaterlineTranslator {
   }
 
   resolveCreate(modelName) {
-    return (root, args) => this._models[modelName].create(args);
+    return (root, args) => Utils.makeCircular(this._models[modelName].create(args), this._models);
   }
 
   resolveUpdate(modelName) {

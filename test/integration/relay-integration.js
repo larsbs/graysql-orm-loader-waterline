@@ -9,7 +9,6 @@ const GraysQL = require('graysql');
 const Graylay = require('graysql/extensions/graylay');
 const ORMLoader = require('graysql-orm-loader');
 
-const Utils = require('../../src/utils');
 const WaterlineTranslator = require('../../src/waterline-translator');
 const bootstrapWaterline = require('../support/waterline-test');
 
@@ -304,6 +303,141 @@ module.exports = function () {
           }}
         };
         graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+    });
+
+    describe('Basic Mutations', function () {
+      it('should allow us to create a new user', function (done) {
+        const mutation = `mutation AddUser {
+          createUser(nick: "Imlach") {
+            id,
+            nick
+          }
+        }`;
+        const expected = {
+          data: {
+            createUser: {
+              id: 'dXNlcjo0',
+              nick: 'Imlach'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to create a new group', function (done) {
+        const mutation = `mutation AddGroup {
+          createGroup(name: "Group 3") {
+            id,
+            name
+          }
+        }`;
+        const expected = {
+          data: {
+            createGroup: {
+              id: 'Z3JvdXA6Mw==',
+              name: 'Group 3'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to update an user', function (done) {
+        const mutation = `mutation UpdateUser {
+          updateUser(id: 1, nick: "Fienhard") {
+            id,
+            nick
+          }
+        }`;
+        const expected = {
+          data: {
+            updateUser: {
+              id: 'dXNlcjox',
+              nick: 'Fienhard'
+            }
+          }
+        }
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to update a group', function (done) {
+        const mutation = `mutation UpdateGroup {
+          updateGroup(id: 1, name: "Group One") {
+            id,
+            name
+          }
+        }`;
+        const expected = {
+          data: {
+            updateGroup: {
+              id: 'Z3JvdXA6MQ==',
+              name: 'Group One'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to delete an user', function (done) {
+        const mutation = `mutation DeleteUser {
+          deleteUser(id: 2) {
+            id,
+            nick
+          }
+        }`;
+        const expected = {
+          data: {
+            deleteUser: {
+              id: 'dXNlcjoy',
+              nick: 'Deathvoid'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to delete a group', function (done) {
+        const mutation = `mutation DeleteGroup {
+          deleteGroup(id: 2) {
+            id,
+            name
+          }
+        }`;
+        const expected = {
+          data: {
+            deleteGroup: {
+              id: 'Z3JvdXA6Mg==',
+              name: 'Group 2'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
         .then(result => {
           expect(result).to.deep.equal(expected);
           done();
