@@ -9,6 +9,7 @@ const GraysQL = require('graysql');
 const Graylay = require('graysql/extensions/graylay');
 const ORMLoader = require('graysql-orm-loader');
 
+const Utils = require('../../src/utils');
 const WaterlineTranslator = require('../../src/waterline-translator');
 const bootstrapWaterline = require('../support/waterline-test');
 
@@ -210,6 +211,95 @@ module.exports = function () {
             group: {
               id: 'Z3JvdXA6MQ==',
               name: 'Group 1'
+            }
+          }}
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+    });
+
+    describe('Circular Queries', function () {
+      it('should allow us to query for the group of the members of a group', function (done) {
+        const query = `query GetCircularGroup {
+          group(id: 1) {
+            id,
+            name,
+            members {
+              edges {
+                node {
+                  id,
+                  nick,
+                  group {
+                    id
+                  }
+                }
+              }
+            }
+          }
+        }`;
+        const expected = {
+          data: {group: {
+            id: 'Z3JvdXA6MQ==',
+            name: 'Group 1',
+            members: {
+              edges: [{
+                node: {
+                  id: 'dXNlcjox',
+                  nick: 'Lars',
+                  group: { id: 'Z3JvdXA6MQ==' }
+                }
+              }, {
+                node: {
+                  id: 'dXNlcjoy',
+                  nick: 'Deathvoid',
+                  group: { id: 'Z3JvdXA6MQ==' }
+                }
+              }]
+            }
+          }}
+        };
+        graphql.graphql(Schema, query)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to query for the members of the group of an user', function (done) {
+        const query = `query GetCircularUser {
+          user(id: 1) {
+            id,
+            nick,
+            group {
+              id,
+              name,
+              members {
+                edges {
+                  node {
+                    id
+                  }
+                }
+              }
+            }
+          }
+        }`;
+        const expected = {
+          data: {user: {
+            id: 'dXNlcjox',
+            nick: 'Lars',
+            group: {
+              id: 'Z3JvdXA6MQ==',
+              name: 'Group 1',
+              members: {edges: [{
+                node: { id: 'dXNlcjox' }
+              }, {
+                node: { id: 'dXNlcjoy' }
+              }]}
             }
           }}
         };

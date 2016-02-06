@@ -236,7 +236,7 @@ module.exports = function () {
             }, {
               id: 2,
               nick: 'Deathvoid',
-              group: { id: 2 }
+              group: { id: 1 }
             }]
           }}
         };

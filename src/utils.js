@@ -6,13 +6,14 @@ function isManyRelation(relation) {
 }
 
 
-function createRelationPromise(id, relation, models) {
+function createRelationPromise(source, relation, models) {
   if (isManyRelation(relation)) {
     const via = relation.attribute.via;
-    return Utils.makeCircular(models[relation.attribute.collection].find({ [via]: id }), models);
+    return Utils.makeCircular(models[relation.attribute.collection].find({ [via]: source.id }), models);
   }
   else {
-    return Utils.makeCircular(models[relation.attribute.model].findOneById(id), models);
+    const relationId = source[relation.attribute.model];
+    return Utils.makeCircular(models[relation.attribute.model].findOneById(relationId), models);
   }
 }
 
@@ -99,19 +100,25 @@ module.exports = Utils = {
       if (Array.isArray(result)) {
         result = result.map(x => x.toObject())
         .map(e => {
+          const result = Object.assign({}, e);
           for (const relation of relations) {
-            e[relation.key] = () => createRelationPromise(e.id, relation, models);
+            if (typeof result[relation.key] !== 'function') {
+              result[relation.key] = () => createRelationPromise(e, relation, models);
+            }
           }
-          e._model = context._context._model;
-          return e;
+          result._model = context._context._model;
+          return result;
         });
       }
       else {
         result = result.toObject();
-        result._model = context._context._model;
+        const cloned = Object.assign({}, result);
         for (const relation of relations) {
-          result[relation.key] = () => createRelationPromise(result.id, relation, models);
+          if (typeof result[relation.key] !== 'function') {
+            result[relation.key] = () => createRelationPromise(cloned, relation, models);
+          }
         }
+        result._model = context._context._model;
       }
 
       return result;
