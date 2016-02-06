@@ -4,6 +4,7 @@ const expect = require('chai').expect;
 const path = require('path');
 const rmdir = require('rmdir');
 const graphql = require('graphql');
+const GraphQLRelay = require('graphql-relay');
 const GraphQLUtils = require('graphql/utilities');
 const GraysQL = require('graysql');
 const Graylay = require('graysql/extensions/graylay');
@@ -439,6 +440,117 @@ module.exports = function () {
         };
         graphql.graphql(Schema, mutation)
         .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+    });
+
+    describe('Relationship Mutations', function () {
+      let addedUserId;
+      let addedGroupId;
+      beforeEach(function (done) {
+        const addUser = `mutation AddUser {
+          createUser(nick: "Vanul") {
+            id
+          }
+        }`;
+        const addGroup = `mutation AddGroup {
+          createGroup(name: "GDO") {
+            id
+          }
+        }`;
+        Promise.all([graphql.graphql(Schema, addUser), graphql.graphql(Schema, addGroup)])
+        .then(result => {
+          addedUserId = GraphQLRelay.fromGlobalId(result[0].data.createUser.id).id;
+          addedGroupId = GraphQLRelay.fromGlobalId(result[1].data.createGroup.id).id;
+          done();
+        })
+        .catch(err => done);
+      });
+      afterEach(function (done) {
+        const deleteUser = `mutation DeleteUser {
+          deleteUser(id: ${addedUserId})
+        }`;
+        const deleteGroup = `mutation DeleteGroup {
+          deleteGroup(id: ${addedGroupId})
+        }`;
+        Promise.all([graphql.graphql(Schema, deleteUser), graphql.graphql(Schema, deleteGroup)])
+        .then(result => {
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to add an user to a group', function (done) {
+        const mutation = `mutation UpdateGroup {
+          updateGroup(id: ${addedGroupId}, members: [${addedUserId}]) {
+            id,
+            name,
+            members {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        }`;
+        const expected = {
+          data: {
+            updateGroup: {
+              id: GraphQLRelay.toGlobalId('group', addedGroupId),
+              name: 'GDO',
+              members: { edges: [{
+                node: { id: GraphQLRelay.toGlobalId('user', addedUserId) }
+              }]}
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          expect(result).to.deep.equal(expected);
+          done();
+        })
+        .catch(err => done(err));
+      });
+      it('should allow us to remove an user from a group', function (done) {
+        const mutation = `mutation UpdateUser {
+          updateUser(id: ${addedUserId}, group: -1) {
+            id,
+            nick
+          }
+        }`;
+        const expected = {
+          data: {
+            updateUser: {
+              id: GraphQLRelay.toGlobalId('user', addedUserId),
+              nick: 'Vanul'
+            }
+          }
+        };
+        graphql.graphql(Schema, mutation)
+        .then(result => {
+          const query = `query GetUser {
+            user(id: ${addedUserId}) {
+              id,
+              nick,
+              group {
+                id
+              }
+            }
+          }`;
+          expect(result).to.deep.equal(expected);
+          return graphql.graphql(Schema, query);
+        })
+        .then(result => {
+          const expected = {
+            data: {user: {
+              id: GraphQLRelay.toGlobalId('user', addedUserId),
+              nick: 'Vanul',
+              group: null
+            }}
+          };
           expect(result).to.deep.equal(expected);
           done();
         })
