@@ -3,6 +3,8 @@
 This is a translator for [graysql-orm-loader](https://github.com/larsbs/graysql-orm-loader) that will translate
 the models defined in Waterline to a valid GraphQL schema.
 
+> PD: If you want a simple way to integrate this with a Sails.js application, check [sails-hook-graysql](https://github.com/larsbs/sails-hook-graysql).
+
 ## Installation ##
 
 Install it from npm. Make sure to install its peer-dependencies as well.
